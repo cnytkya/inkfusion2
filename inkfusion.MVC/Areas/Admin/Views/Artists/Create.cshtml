@@ -30,13 +30,13 @@
 
                     <div class="mb-3">
                         <label for="Name" class="form-label">Adı <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control @(ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"].Errors.Any() ? "is-invalid" : "")"
+                        <input type="text" class="form-control @(ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"]?.Errors.Any() == true ? "is-invalid" : "")"
                                id="Name" name="Name" placeholder="Sanatçının adını girin" required
                                value="@Model?.Name" maxlength="255">
-                        @if (ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"].Errors.Any())
+                        @if (ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"]?.Errors.Any() == true)
                         {
                             <div class="invalid-feedback d-block">
-                                @ViewData.ModelState["Name"].Errors.First().ErrorMessage
+                                @ViewData.ModelState["Name"]?.Errors.First().ErrorMessage
                             </div>
                         }
                     </div>
@@ -45,7 +45,7 @@
                         <label for="Specialty" class="form-label">Uzmanlık Alanı</label>
                         <input type="text" class="form-control" id="Specialty" name="Specialty"
                                placeholder="Örn: Dövme Sanatçısı, Ressam, vb."
-                               value="@Model.Specialty" maxlength="100">
+                               value="@Model?.Specialty" maxlength="100">
                     </div>
 
                     <div class="mb-3">

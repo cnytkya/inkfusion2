@@ -6,7 +6,6 @@ using inkfusion.MVC.Models;
 namespace inkfusion.MVC.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Route("Admin/[controller]")]
     public class ArtistsController : Controller
     {
         private readonly AppDbContext _context;
@@ -19,6 +18,7 @@ namespace inkfusion.MVC.Areas.Admin.Controllers
         }
 
         // GET: Admin/Artists
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var artists = await _context.Artists.OrderByDescending(a => a.CreatedAt).ToListAsync();
@@ -26,9 +26,10 @@ namespace inkfusion.MVC.Areas.Admin.Controllers
         }
 
         // GET: Admin/Artists/Create
+        [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            return View(new Artist());
         }
 
         // POST: Admin/Artists/Create
@@ -62,6 +63,7 @@ namespace inkfusion.MVC.Areas.Admin.Controllers
         }
 
         // GET: Admin/Artists/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
