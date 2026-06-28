@@ -22,11 +22,21 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    @{
+                        var userName = Context.Session.GetString("UserName");
+                    }
                     <li class="nav-item">
                         <a class="nav-link" href="/">Site Geri Dön</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Çıkış</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-1"></i>@userName
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
+                            <li><a class="dropdown-item" href="/Admin/Profile"><i class="fas fa-user-circle me-2"></i>Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/Logout"><i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap</a></li>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -57,6 +67,16 @@
                     <li>
                         <a href="/Admin/Artists" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Artists" ? "active" : "")">
                             <i class="fas fa-users"></i> Sanatçılar
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Users" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Users" ? "active" : "")">
+                            <i class="fas fa-user-shield"></i> Kullanıcılar
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/Admin/Profile" class="menu-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "active" : "")">
+                            <i class="fas fa-user-circle"></i> Profil
                         </a>
                     </li>
                     <li>

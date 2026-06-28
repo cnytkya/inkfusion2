@@ -1,23 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
+using Microsoft.EntityFrameworkCore;
+using inkfusion.MVC.Data;
+using inkfusion.MVC.Utilities;
 
 namespace inkfusion.MVC.Controllers
 {
     public class LoginController : Controller
     {
         private readonly ILogger<LoginController> _logger;
+        private readonly AppDbContext _context;
 
-        // Hardcoded credentials
-        private const string VALID_EMAIL = "ramaza.ciniogli@gmail.com";
-        private const string VALID_PASSWORD = "Ramazan2026.R";
+        // Session key for user name
+        private const string USER_SESSION_KEY = "UserName";
+        // Session key for user email (for reference)
+        private const string USER_EMAIL_SESSION_KEY = "UserEmail";
 
-        // Session key
-        private const string USER_SESSION_KEY = "UserEmail";
-
-        public LoginController(ILogger<LoginController> logger)
+        public LoginController(ILogger<LoginController> logger, AppDbContext context)
         {
             _logger = logger;
+            _context = context;
         }
 
         /// <summary>
@@ -39,12 +40,12 @@ namespace inkfusion.MVC.Controllers
 
         /// <summary>
         /// POST: /Login
-        /// Handles login form submission
+        /// Handles login form submission with database verification
         /// </summary>
         [HttpPost]
         [Route("/Login")]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string email, string password, bool rememberMe = false)
+        public async Task<IActionResult> Login(string email, string password, bool rememberMe = false)
         {
             try
             {
@@ -55,13 +56,17 @@ namespace inkfusion.MVC.Controllers
                     return View();
                 }
 
-                // Verify credentials
-                if (VerifyCredentials(email, password))
-                {
-                    // Set session
-                    HttpContext.Session.SetString(USER_SESSION_KEY, email);
+                // Verify credentials from database
+                var user = await VerifyCredentialsAsync(email, password);
 
-                    _logger.LogInformation($"User {email} logged in successfully at {DateTime.UtcNow}");
+                if (user != null)
+                {
+                    // Set session with user's name (not email)
+                    HttpContext.Session.SetString(USER_SESSION_KEY, user.Name);
+                    // Also store email for reference
+                    HttpContext.Session.SetString(USER_EMAIL_SESSION_KEY, user.Email);
+
+                    _logger.LogInformation($"User {user.Email} ({user.Name}) logged in successfully at {DateTime.UtcNow}");
 
                     // Redirect to admin dashboard
                     return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
@@ -91,14 +96,17 @@ namespace inkfusion.MVC.Controllers
         {
             try
             {
-                var email = HttpContext.Session.GetString(USER_SESSION_KEY);
-                if (!string.IsNullOrEmpty(email))
+                var userName = HttpContext.Session.GetString(USER_SESSION_KEY);
+                var userEmail = HttpContext.Session.GetString(USER_EMAIL_SESSION_KEY);
+
+                if (!string.IsNullOrEmpty(userEmail))
                 {
-                    _logger.LogInformation($"User {email} logged out at {DateTime.UtcNow}");
+                    _logger.LogInformation($"User {userEmail} ({userName}) logged out at {DateTime.UtcNow}");
                 }
 
                 // Clear session
                 HttpContext.Session.Remove(USER_SESSION_KEY);
+                HttpContext.Session.Remove(USER_EMAIL_SESSION_KEY);
                 HttpContext.Session.Clear();
 
                 return RedirectToAction("Index", "Home");
@@ -111,16 +119,35 @@ namespace inkfusion.MVC.Controllers
         }
 
         /// <summary>
-        /// Verifies if the provided email and password match the hardcoded credentials
+        /// Verifies if the provided email and password match a user in the database
+        /// Returns the user object if credentials are valid, null otherwise
         /// </summary>
-        private bool VerifyCredentials(string email, string password)
+        private async Task<Models.User?> VerifyCredentialsAsync(string email, string password)
         {
-            // Use constant-time comparison to prevent timing attacks
-            bool emailMatch = email.Equals(VALID_EMAIL, StringComparison.Ordinal);
-            bool passwordMatch = password.Equals(VALID_PASSWORD, StringComparison.Ordinal);
+            try
+            {
+                // Find user by email
+                var user = await _context.Users
+                    .FirstOrDefaultAsync(u => u.Email == email && u.IsActive);
 
-            // Both must match
-            return emailMatch && passwordMatch;
+                if (user == null)
+                {
+                    return null;
+                }
+
+                // Verify password using PasswordHasher utility
+                if (PasswordHasher.VerifyPassword(password, user.PasswordHash))
+                {
+                    return user;
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error verifying credentials: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>
@@ -132,11 +159,19 @@ namespace inkfusion.MVC.Controllers
         }
 
         /// <summary>
+        /// Gets the currently logged-in user's name from session
+        /// </summary>
+        public string? GetCurrentUserName()
+        {
+            return HttpContext.Session.GetString(USER_SESSION_KEY);
+        }
+
+        /// <summary>
         /// Gets the currently logged-in user's email from session
         /// </summary>
         public string? GetCurrentUserEmail()
         {
-            return HttpContext.Session.GetString(USER_SESSION_KEY);
+            return HttpContext.Session.GetString(USER_EMAIL_SESSION_KEY);
         }
     }
 }

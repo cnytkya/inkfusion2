@@ -10,7 +10,7 @@ namespace inkfusion.MVC.Attributes
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class RequireLoginAttribute : Attribute, IAuthorizationFilter
     {
-        private const string USER_SESSION_KEY = "UserEmail";
+        private const string USER_SESSION_KEY = "UserName";
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
@@ -20,10 +20,10 @@ namespace inkfusion.MVC.Attributes
             }
 
             var session = context.HttpContext.Session;
-            var userEmail = session?.GetString(USER_SESSION_KEY);
+            var userName = session?.GetString(USER_SESSION_KEY);
 
-            // If no user email in session, user is not logged in
-            if (string.IsNullOrEmpty(userEmail))
+            // If no user name in session, user is not logged in
+            if (string.IsNullOrEmpty(userName))
             {
                 // Store the original URL to redirect back after login
                 context.HttpContext.Session?.SetString("ReturnUrl", context.HttpContext.Request.Path.ToString());

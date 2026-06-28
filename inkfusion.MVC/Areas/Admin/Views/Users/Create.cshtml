@@ -1,0 +1,119 @@
+@{
+    ViewData["Title"] = "Yeni Kullanıcı Ekle";
+}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2 class="mb-0">
+            <i class="fas fa-user-plus me-2"></i>Yeni Kullanıcı Ekle
+        </h2>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="/Admin/Users" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Geri Dön
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" asp-action="Create">
+                    @Html.AntiForgeryToken()
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Lütfen aşağıdaki hataları düzeltiniz:
+                            </h5>
+                            <ul class="mb-0">
+                                @foreach (var modelState in ViewData.ModelState.Values)
+                                {
+                                    @foreach (var error in modelState.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Ad Soyad <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control @(ViewData.ModelState.ContainsKey("name") && ViewData.ModelState["name"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                               id="name" name="name" placeholder="Ad ve Soyadı girin" required>
+                        @if (ViewData.ModelState.ContainsKey("name"))
+                        {
+                            <div class="invalid-feedback d-block">
+                                @ViewData.ModelState["name"]?.Errors.FirstOrDefault()?.ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-posta <span class="text-danger">*</span></label>
+                        <input type="email" class="form-control @(ViewData.ModelState.ContainsKey("email") && ViewData.ModelState["email"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                               id="email" name="email" placeholder="E-posta adresini girin" required>
+                        @if (ViewData.ModelState.ContainsKey("email"))
+                        {
+                            <div class="invalid-feedback d-block">
+                                @ViewData.ModelState["email"]?.Errors.FirstOrDefault()?.ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Şifre <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control @(ViewData.ModelState.ContainsKey("password") && ViewData.ModelState["password"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                               id="password" name="password" placeholder="Şifreyi girin (en az 8 karakter)" required>
+                        <small class="form-text text-muted d-block mt-2">
+                            <i class="fas fa-info-circle me-1"></i>Şifre en az 8 karakter uzunluğunda olmalıdır
+                        </small>
+                        @if (ViewData.ModelState.ContainsKey("password"))
+                        {
+                            <div class="invalid-feedback d-block">
+                                @ViewData.ModelState["password"]?.Errors.FirstOrDefault()?.ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">Şifre Tekrar <span class="text-danger">*</span></label>
+                        <input type="password" class="form-control @(ViewData.ModelState.ContainsKey("confirmPassword") && ViewData.ModelState["confirmPassword"]?.Errors.Count > 0 ? "is-invalid" : "")"
+                               id="confirmPassword" name="confirmPassword" placeholder="Şifreyi tekrar girin" required>
+                        @if (ViewData.ModelState.ContainsKey("confirmPassword"))
+                        {
+                            <div class="invalid-feedback d-block">
+                                @ViewData.ModelState["confirmPassword"]?.Errors.FirstOrDefault()?.ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="/Admin/Users" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>İptal
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Simple password matching validation
+        document.getElementById('confirmPassword').addEventListener('change', function() {
+            if (this.value !== document.getElementById('password').value) {
+                this.classList.add('is-invalid');
+            } else {
+                this.classList.remove('is-invalid');
+            }
+        });
+    </script>
+}
