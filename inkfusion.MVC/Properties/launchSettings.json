@@ -8,7 +8,8 @@
       "applicationUrl": "http://localhost:5065",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "hotReloadProfile": "aspnetcore"
     },
     "https": {
       "commandName": "Project",

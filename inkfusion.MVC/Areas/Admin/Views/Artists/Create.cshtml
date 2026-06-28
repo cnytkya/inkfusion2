@@ -1,0 +1,125 @@
+@model Artist
+
+@{
+    ViewData["Title"] = "Yeni Sanatçı Ekle";
+}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="page-title">
+            <i class="fas fa-plus-circle"></i> Yeni Sanatçı Ekle
+        </h1>
+    </div>
+</div>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        <strong>Hata!</strong> Lütfen form hatalarını düzeltin.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">Adı <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control @(ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"].Errors.Any() ? "is-invalid" : "")"
+                               id="Name" name="Name" placeholder="Sanatçının adını girin" required
+                               value="@Model?.Name" maxlength="255">
+                        @if (ViewData.ModelState.ContainsKey("Name") && ViewData.ModelState["Name"].Errors.Any())
+                        {
+                            <div class="invalid-feedback d-block">
+                                @ViewData.ModelState["Name"].Errors.First().ErrorMessage
+                            </div>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Specialty" class="form-label">Uzmanlık Alanı</label>
+                        <input type="text" class="form-control" id="Specialty" name="Specialty"
+                               placeholder="Örn: Dövme Sanatçısı, Ressam, vb."
+                               value="@Model.Specialty" maxlength="100">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Bio" class="form-label">Biyografi</label>
+                        <textarea class="form-control" id="Bio" name="Bio" rows="5"
+                                  placeholder="Sanatçı hakkında bilgi yazın..."
+                                  maxlength="1000">@Model.Bio</textarea>
+                        <small class="form-text text-muted">Maksimum 1000 karakter</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="imageFile" class="form-label">Profil Resmi</label>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="imageFile" name="imageFile"
+                                   accept=".jpg,.jpeg,.png,.gif,.webp">
+                        </div>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-info-circle"></i> Desteklenen formatlar: JPG, PNG, GIF, WEBP
+                        </small>
+                    </div>
+
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="IsActive" name="IsActive"
+                               value="true" @(Model.IsActive ? "checked" : "")>
+                        <label class="form-check-label" for="IsActive">
+                            Aktif
+                        </label>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Kaydet
+                        </button>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> İptal
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-lightbulb"></i> İpuçları
+                </h5>
+                <ul class="small">
+                    <li>Sanatçının adı zorunludur</li>
+                    <li>Uzmanlık alanı maksimum 100 karakterdir</li>
+                    <li>Biyografi maksimum 1000 karakterdir</li>
+                    <li>Resim yüklemek isteğe bağlıdır</li>
+                    <li>Aktif kutusu işaretlenirse sanatçı listelerde görünür</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.page-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+}
+
+.text-danger {
+    color: #dc3545;
+}
+</style>

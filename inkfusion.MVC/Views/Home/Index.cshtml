@@ -165,49 +165,7 @@
                 </div>
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col-md-4 mb-4">
-                <div class="artist-card">
-                    <div class="artist-image" style="background-image: url('https://placehold.co/400x500/1a1a1a/FFFFFF/png?text=Yiğit+Kırkyıldız');"></div>
-                    <div class="artist-info">
-                        <h3 data-lang-key="artist1-name">Yiğit Kırkyıldız</h3>
-                        <p data-lang-key="artist1-specialty">Realistik Dövmeler Uzmanı</p>
-                        <div class="artist-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="artist-card">
-                    <div class="artist-image" style="background-image: url('https://placehold.co/400x500/1a1a1a/FFFFFF/png?text=Onur+Sarı');"></div>
-                    <div class="artist-info">
-                        <h3 data-lang-key="artist2-name">
-                            Onur Sarı
-                        </h3>
-                        <p data-lang-key="artist2-specialty">Geleneksel Dövmeler Uzmanı</p>
-                        <div class="artist-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="artist-card">
-                    <div class="artist-image" style="background-image: url('https://placehold.co/400x500/1a1a1a/FFFFFF/png?text=Ramazan Savaş+Çinioğlu');"></div>
-                    <div class="artist-info">
-                        <h3 data-lang-key="artist3-name">Ramazan Savaş Çinioğlu </h3>
-                        <p data-lang-key="artist3-specialty">Minimal Dövmeler Uzmanı</p>
-                        <div class="artist-social">
-                            <a href="#"><i class="fab fa-instagram"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @await Html.PartialAsync("_ArtistsSection")
     </div>
 </section>
 
