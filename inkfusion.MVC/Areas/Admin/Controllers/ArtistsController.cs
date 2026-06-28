@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using inkfusion.MVC.Data;
 using inkfusion.MVC.Models;
+using inkfusion.MVC.Attributes;
 
 namespace inkfusion.MVC.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [RequireLogin]
     public class ArtistsController : Controller
     {
         private readonly AppDbContext _context;
