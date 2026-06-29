@@ -1,0 +1,71 @@
+@using inkfusion.MVC.Models
+
+@{
+    var contactInfo = ViewBag.ContactInfo as List<ContactInfo> ?? new List<ContactInfo>();
+}
+
+<footer class="footer-section text-center text-lg-start">
+    <div class="container pt-5">
+        <div class="row">
+            <!-- About Section -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase footer-heading">InkFusion</h5>
+                <p class="footer-text" data-lang-key="footer-about-text">
+                    Sanatını seven, kaliteyi önemseyen bir dövme stüdyosu.
+                    Sizlere en iyi hizmeti sunmak için buradayız.
+                </p>
+            </div>
+
+            <!-- Dynamic Contact Info Section -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase footer-heading" data-lang-key="contact-info-title">İletişim</h5>
+                <ul class="list-unstyled">
+                    @if (contactInfo != null && contactInfo.Count > 0)
+                    {
+                        @foreach (var contact in contactInfo.Where(c => c.IsActive))
+                        {
+                            <li class="footer-text">
+                                @if (!string.IsNullOrEmpty(contact.IconClass))
+                                {
+                                    <i class="@contact.IconClass me-2"></i>
+                                }
+                                <span>@contact.Value</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <!-- Fallback to hardcoded values if no data -->
+                        <li class="footer-text">
+                            <i class="fas fa-map-marker-alt me-2"></i> <span data-lang-key="address">Taksim, İstanbul</span>
+                        </li>
+                        <li class="footer-text">
+                            <i class="fas fa-phone me-2"></i> <span data-lang-key="phone">+90 531 288 01 61</span>
+                        </li>
+                        <li class="footer-text">
+                            <i class="fas fa-envelope me-2"></i> <span data-lang-key="email">ciniogluserap@gmail.com</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <!-- Social Media Section -->
+            <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                <h5 class="text-uppercase footer-heading" data-lang-key="social-media-title">Sosyal Medya</h5>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/inkftattoopiercing/" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/905312880161" class="social-link" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright Section -->
+    <div class="text-center p-3 copyright">
+        © 2025 - Bu site <strong>Cüneyt Kaya</strong> tarafından yapıldı. İletişim için <a href="http://www.cuneytkayadev.com" target="_blank" class="footer-link">www.cuneytkayadev.com</a> sitesini ziyaret edin. - <a asp-area="" asp-controller="Home" asp-action="Privacy" data-lang-key="privacy">Gizlilik</a>
+    </div>
+</footer>

@@ -5,20 +5,16 @@ using inkfusion.MVC.Utilities;
 
 namespace inkfusion.MVC.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : BaseController
     {
-        private readonly ILogger<LoginController> _logger;
-        private readonly AppDbContext _context;
-
         // Session key for user name
         private const string USER_SESSION_KEY = "UserName";
         // Session key for user email (for reference)
         private const string USER_EMAIL_SESSION_KEY = "UserEmail";
 
         public LoginController(ILogger<LoginController> logger, AppDbContext context)
+            : base(context, logger)
         {
-            _logger = logger;
-            _context = context;
         }
 
         /// <summary>
@@ -27,13 +23,16 @@ namespace inkfusion.MVC.Controllers
         /// </summary>
         [HttpGet]
         [Route("/Login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
             // If user is already logged in, redirect to admin dashboard
             if (User.Identity?.IsAuthenticated ?? false || IsUserLoggedIn())
             {
                 return RedirectToAction("Index", "Dashboard", new { area = "Admin" });
             }
+
+            // Load contact info for footer
+            await LoadContactInfoAsync();
 
             return View();
         }
@@ -52,6 +51,7 @@ namespace inkfusion.MVC.Controllers
                 // Validate input
                 if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 {
+                    await LoadContactInfoAsync();
                     TempData["ErrorMessage"] = "E-posta ve şifre alanları boş olamaz.";
                     return View();
                 }
@@ -73,6 +73,7 @@ namespace inkfusion.MVC.Controllers
                 }
                 else
                 {
+                    await LoadContactInfoAsync();
                     _logger.LogWarning($"Failed login attempt for email: {email} at {DateTime.UtcNow}");
                     TempData["ErrorMessage"] = "E-posta veya şifre hatalı. Lütfen tekrar deneyiniz.";
                     return View();
@@ -80,6 +81,7 @@ namespace inkfusion.MVC.Controllers
             }
             catch (Exception ex)
             {
+                await LoadContactInfoAsync();
                 _logger.LogError($"Error during login: {ex.Message}");
                 TempData["ErrorMessage"] = "Giriş sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
