@@ -1,32 +1,48 @@
-﻿@{
+﻿@model HomePageViewModel
+
+@{
     ViewData["Title"] = "InkFusion - Piercing Tattoo Studio";
 }
 
-<section id="home" class="hero-section">
-    <div class="video-background">
-        <video autoplay muted loop playsinline id="hero-video">
-            <source src="videos/v1.MP4" type="video/mp4">
-        </video>
-    </div>
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 mx-auto text-center">
-                    <h1 class="hero-title" data-lang-key="hero-title">Sanatını <span class="text-accent">Vücudunda</span> Taşı</h1>
-                    <p class="hero-subtitle" data-lang-key="hero-subtitle">Profesyonel dövme sanatçıları ile hayalindeki dövmeyi gerçeğe dönüştürüyoruz.</p>
-                    <div class="hero-buttons mt-4">
-                        <a href="#contact" class="btn btn-primary me-3" data-lang-key="book-now">Randevu Al</a>
-                        <a href="#gallery" class="btn btn-outline" data-lang-key="view-work">İşlerimize Bak</a>
+@if (Model?.HeroSection != null)
+{
+    <section id="home" class="hero-section">
+        @if (!string.IsNullOrEmpty(Model.HeroSection.ImageUrl))
+        {
+            <div class="video-background">
+                <img src="@Model.HeroSection.ImageUrl" alt="Hero" class="hero-image" />
+            </div>
+        }
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h1 class="hero-title">@Html.Raw(Model.HeroSection.Title)</h1>
+                        @if (!string.IsNullOrEmpty(Model.HeroSection.Subtitle))
+                        {
+                            <p class="hero-subtitle">@Model.HeroSection.Subtitle</p>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.HeroSection.Description))
+                        {
+                            <p class="hero-description">@Model.HeroSection.Description</p>
+                        }
+                        <div class="hero-buttons mt-4">
+                            @if (!string.IsNullOrEmpty(Model.HeroSection.ButtonText) && !string.IsNullOrEmpty(Model.HeroSection.ButtonLink))
+                            {
+                                <a href="@Model.HeroSection.ButtonLink" class="btn btn-primary me-3">@Model.HeroSection.ButtonText</a>
+                            }
+                            <a href="#gallery" class="btn btn-outline">İşlerimize Bak</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="hero-scroll">
-        <a href="#about"><i class="fas fa-chevron-down"></i></a>
-    </div>
-</section>
+        <div class="hero-scroll">
+            <a href="#about"><i class="fas fa-chevron-down"></i></a>
+        </div>
+    </section>
+}
 
 <section id="about" class="section-padding">
     <div class="container">
@@ -77,82 +93,96 @@
     </div>
 </section>
 
-<section id="services" class="section-padding bg-dark-custom">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <div class="section-heading">
-                    <h2 class="section-title" data-lang-key="services-title">Hizmetlerimiz</h2>
-                    <div class="section-divider"></div>
-                    <p class="section-subtitle" data-lang-key="services-subtitle">Size özel çözümler sunuyoruz</p>
+@if (Model?.Services != null && Model.Services.Count > 0)
+{
+    <section id="services" class="section-padding bg-dark-custom">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="section-heading">
+                        <h2 class="section-title">Hizmetlerimiz</h2>
+                        <div class="section-divider"></div>
+                        <p class="section-subtitle">Size özel çözümler sunuyoruz</p>
+                    </div>
                 </div>
+            </div>
+            <div class="row mt-5">
+                @foreach (var service in Model.Services.Where(s => s.IsActive).OrderBy(s => s.Order))
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="service-card">
+                            @if (!string.IsNullOrEmpty(service.IconClass))
+                            {
+                                <div class="service-icon">
+                                    <i class="@service.IconClass"></i>
+                                </div>
+                            }
+                            else if (!string.IsNullOrEmpty(service.ImageUrl))
+                            {
+                                <div class="service-image">
+                                    <img src="@service.ImageUrl" alt="@service.Name" />
+                                </div>
+                            }
+                            <h3>@service.Name</h3>
+                            @if (!string.IsNullOrEmpty(service.Description))
+                            {
+                                <p>@service.Description</p>
+                            }
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-drafting-compass"></i>
-                    </div>
-                    <h3 data-lang-key="service1-title">Özel Tasarım</h3>
-                    <p data-lang-key="service1-text">Hayalinizdeki dövmeyi birlikte tasarlayalım. Tamamen size özel ve özgün çizimler.</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-paint-brush"></i>
-                    </div>
-                    <h3 data-lang-key="service2-title">Renkli Dövmeler</h3>
-                    <p data-lang-key="service2-text">Canlı ve kalıcı renklerle hayalinizdeki dövmeyi sanat eserine dönüştürüyoruz.</p>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-magic"></i>
-                    </div>
-                    <h3 data-lang-key="service3-title">Cover Up (Dövme Kapatma)</h3>
-                    <p data-lang-key="service3-text">İstemediğiniz dövmeleri, profesyonel dokunuşlarla yepyeni bir sanat eserine dönüştürüyoruz.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+}
 
-<section id="gallery" class="section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <div class="section-heading">
-                    <h2 class="section-title" data-lang-key="gallery-title">Galeri</h2>
-                    <div class="section-divider"></div>
-                    <p class="section-subtitle" data-lang-key="gallery-subtitle">Yaptığımız bazı çalışmalar</p>
+@if (Model?.Galleries != null && Model.Galleries.Count > 0)
+{
+    <section id="gallery" class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="section-heading">
+                        <h2 class="section-title">Galeri</h2>
+                        <div class="section-divider"></div>
+                        <p class="section-subtitle">Yaptığımız bazı çalışmalar</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row mt-5">
-            @* Sadece ilk 12 resmi gösteren döngü *@
-            @for (int i = 1; i <= 12; i++)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="gallery-item">
-                        <div class="gallery-image" style="background-image: url('img/gallery/realistic/@(i).jpg');">
-                            <div class="gallery-overlay">
-                                @*<h4 data-lang-key="tattoo1-title">Dövme @i</h4>*@
-                                <p data-lang-key="tattoo1-style">Realistik</p>
+            <div class="row mt-5">
+                @{
+                    var activeGalleries = Model.Galleries.Where(g => g.IsActive).OrderBy(g => g.Order).Take(12).ToList();
+                }
+                @foreach (var gallery in activeGalleries)
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="gallery-item">
+                            <div class="gallery-image" style="background-image: url('@gallery.ImageUrl');">
+                                <div class="gallery-overlay">
+                                    @if (!string.IsNullOrEmpty(gallery.Title))
+                                    {
+                                        <h4>@gallery.Title</h4>
+                                    }
+                                    @if (!string.IsNullOrEmpty(gallery.Category))
+                                    {
+                                        <p>@gallery.Category</p>
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            }
+                }
 
-            <div class="col-12 text-center mt-4">
-                <a asp-controller="Inkfusion" asp-action="gallery" class="btn btn-primary animated-link" data-lang-key="view-all-gallery">Daha Fazlası İçin Tıklayın</a>
+                @if (activeGalleries.Count > 0)
+                {
+                    <div class="col-12 text-center mt-4">
+                        <a asp-controller="Inkfusion" asp-action="gallery" class="btn btn-primary animated-link">Daha Fazlası İçin Tıklayın</a>
+                    </div>
+                }
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}
 
 <section id="artists" class="section-padding bg-dark-custom">
     <div class="container">
@@ -169,97 +199,118 @@
     </div>
 </section>
 
-<section id="testimonials" class="section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 mx-auto text-center">
-                <div class="section-heading">
-                    <h2 class="section-title" data-lang-key="testimonials-title">Müşteri Yorumları</h2>
-                    <div class="section-divider"></div>
-                    <p class="section-subtitle" data-lang-key="testimonials-subtitle">Müşterilerimizin deneyimleri</p>
+@if (Model?.Testimonials != null && Model.Testimonials.Count > 0)
+{
+    <section id="testimonials" class="section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center">
+                    <div class="section-heading">
+                        <h2 class="section-title">Müşteri Yorumları</h2>
+                        <div class="section-divider"></div>
+                        <p class="section-subtitle">Müşterilerimizin deneyimleri</p>
+                    </div>
                 </div>
+            </div>
+            <div class="row mt-5">
+                @foreach (var testimonial in Model.Testimonials.Where(t => t.IsActive).Take(6))
+                {
+                    <div class="col-md-4 mb-4">
+                        <div class="testimonial-card">
+                            <div class="testimonial-text">
+                                <i class="fas fa-quote-left quote-icon"></i>
+                                <p>@testimonial.Message</p>
+                            </div>
+                            @if (!string.IsNullOrEmpty(testimonial.Rating.ToString()))
+                            {
+                                <div class="testimonial-rating">
+                                    @for (int i = 1; i <= testimonial.Rating; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @for (int i = testimonial.Rating; i < 5; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                </div>
+                            }
+                            <div class="testimonial-author">
+                                @if (!string.IsNullOrEmpty(testimonial.ImageUrl))
+                                {
+                                    <div class="author-image" style="background-image: url('@testimonial.ImageUrl');"></div>
+                                }
+                                else
+                                {
+                                    <div class="author-image" style="background-image: url('https://placehold.co/60x60/1a1a1a/FFFFFF/png?text=Avatar');"></div>
+                                }
+                                <div class="author-info">
+                                    <h5>@testimonial.Name</h5>
+                                    @if (!string.IsNullOrEmpty(testimonial.Title))
+                                    {
+                                        <p>@testimonial.Title</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
         </div>
-        <div class="row mt-5">
-            <div class="col-md-4 mb-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left quote-icon"></i>
-                        <p data-lang-key="testimonial1-text">Harika bir deneyimdi. Temizlik ve hijyen konusunda çok titizler. Dövmem tam istediğim gibi oldu.</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-image" style="background-image: url('https://placehold.co/60x60/1a1a1a/FFFFFF/png?text=DK');"></div>
-                        <div class="author-info">
-                            <h5 data-lang-key="testimonial1-author">Deniz K.</h5>
-                            <p data-lang-key="testimonial1-tattoo-style">Kol Dövmesi</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left quote-icon"></i>
-                        <p data-lang-key="testimonial2-text">Sanatçılar gerçekten çok yetenekli. Özel tasarım sürecinde tüm isteklerimi dikkate aldılar.</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-image" style="background-image: url('https://placehold.co/60x60/1a1a1a/FFFFFF/png?text=AS');"></div>
-                        <div class="author-info">
-                            <h5 data-lang-key="testimonial2-author">Ahmet S.</h5>
-                            <p data-lang-key="testimonial2-tattoo-style">Özel Tasarım</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="testimonial-card">
-                    <div class="testimonial-text">
-                        <i class="fas fa-quote-left quote-icon"></i>
-                        <p data-lang-key="testimonial3-text">Dövme silme işlemi yaptırdım. Sonuç mükemmel, neredeyse hiç iz kalmadı. Teşekkürler!</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-image" style="background-image: url('https://placehold.co/60x60/1a1a1a/FFFFFF/png?text=EY');"></div>
-                        <div class="author-info">
-                            <h5 data-lang-key="testimonial3-author">Elif Y.</h5>
-                            <p data-lang-key="testimonial3-tattoo-style">Dövme Kapatma</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+    </section>
+}
 
 <section id="contact" class="section-padding bg-dark-custom">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 mx-auto text-center">
                 <div class="section-heading">
-                    <h2 class="section-title" data-lang-key="contact-title">İletişim</h2>
+                    <h2 class="section-title">İletişim</h2>
                     <div class="section-divider"></div>
-                    <p class="section-subtitle" data-lang-key="contact-subtitle">Randevu ve bilgi almak için bize ulaşın</p>
+                    <p class="section-subtitle">Randevu ve bilgi almak için bize ulaşın</p>
                 </div>
             </div>
         </div>
+
+        @if (Model?.ContactInfo != null && Model.ContactInfo.Count > 0)
+        {
+            <div class="row mt-4 mb-5">
+                @foreach (var contact in Model.ContactInfo.Where(c => c.IsActive))
+                {
+                    <div class="col-md-4 mb-3">
+                        <div class="contact-info-card text-center">
+                            @if (!string.IsNullOrEmpty(contact.IconClass))
+                            {
+                                <div class="contact-icon">
+                                    <i class="@contact.IconClass"></i>
+                                </div>
+                            }
+                            <h5>@contact.Key</h5>
+                            <p class="text-light">@contact.Value</p>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
         <div class="row mt-5">
             <div class="col-lg-8 mx-auto">
                 <form id="contactForm">
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input type="text" class="form-control" placeholder="Adınız Soyadınız" required data-lang-key="contact-name-placeholder">
+                            <input type="text" class="form-control" placeholder="Adınız Soyadınız" required>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <input type="email" class="form-control" placeholder="E-posta Adresiniz" required data-lang-key="contact-email-placeholder">
+                            <input type="email" class="form-control" placeholder="E-posta Adresiniz" required>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <input type="text" class="form-control" placeholder="Konu" data-lang-key="contact-subject-placeholder">
+                        <input type="text" class="form-control" placeholder="Konu">
                     </div>
                     <div class="mb-3">
-                        <textarea class="form-control" rows="5" placeholder="Mesajınız" required data-lang-key="contact-message-placeholder"></textarea>
+                        <textarea class="form-control" rows="5" placeholder="Mesajınız" required></textarea>
                     </div>
                     <div class="text-center">
-                        <button type="submit" class="btn btn-primary" data-lang-key="contact-submit-btn">Gönder</button>
+                        <button type="submit" class="btn btn-primary">Gönder</button>
                     </div>
                 </form>
             </div>
