@@ -26,19 +26,20 @@ namespace inkfusion.MVC.Controllers
         /// </summary>
         protected async Task LoadContactInfoAsync()
         {
+            // ContactInfo disabled - model not available in current state
             try
             {
-                var contactInfo = await _context.ContactInfo
-                    .Where(c => c.IsActive)
-                    .OrderBy(c => c.Key)
-                    .ToListAsync();
-
-                ViewBag.ContactInfo = contactInfo;
+                // var contactInfo = await _context.ContactInfo
+                //     .Where(c => c.IsActive)
+                //     .OrderBy(c => c.Key)
+                //     .ToListAsync();
+                // ViewBag.ContactInfo = contactInfo;
+                ViewBag.ContactInfo = new List<object>();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"Error loading contact info: {ex.Message}");
-                ViewBag.ContactInfo = new List<ContactInfo>();
+                ViewBag.ContactInfo = new List<object>();
             }
         }
     }
